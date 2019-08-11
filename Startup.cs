@@ -7,6 +7,10 @@ using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
 using Ocelot.Cache.CacheManager;
 using Ocelot.Cache;
+using ocelotteste.Tools.Cache;
+using ocelotteste.Tools.Handler;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ocelotteste
 {
@@ -27,9 +31,18 @@ namespace ocelotteste
                     .AddCacheManager(x =>
                         {
                             x.WithDictionaryHandle();
-                        });
+                        })
+                    .AddDelegatingHandler<BusSecurtityHandler>();
 
-            services.AddSingleton<IOcelotCache<CachedResponse>, RedisCache>()
+            services.AddSingleton<IOcelotCache<CachedResponse>, RedisCache>();
+
+            services.AddHttpClient("barramento", client =>
+            {
+                client.BaseAddress = new System.Uri("endereco barramento");
+            }
+            ).ConfigureHttpMessageHandlerBuilder(config =>
+            {
+            });
 
         }
 
